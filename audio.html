@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qur'on Audio</title>
+<style>
+body {
+    background: #09251d;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    padding: 25px;
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+h1 { color: #e5c477; }
+.surah {
+    background: #174535;
+    padding: 18px;
+    margin: 15px 0;
+    border-radius: 15px;
+}
+button {
+    background: #d9bd75;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+}
+#status { color: #e5c477; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>☪ Qur'on Kareem</h1>
+<p>Mishary Rashid Alafasy</p>
+
+<div id="list"></div>
+
+<p id="status">Sura tanlang</p>
+<audio id="audio" controls></audio>
+
+</div>
+
+<script>
+const surahs = [
+ {name:"Yasin", id:36, count:83},
+ {name:"Baqara", id:2, count:286},
+ {name:"Oli Imron", id:3, count:200},
+ {name:"Moida", id:5, count:120},
+ {name:"Niso", id:4, count:176}
+];
+
+const audio = document.getElementById("audio");
+const list = document.getElementById("list");
+const statusText = document.getElementById("status");
+
+let currentSurah = null;
+let ayah = 1;
+
+surahs.forEach((s, index) => {
+ const div = document.createElement("div");
+ div.className = "surah";
+ div.innerHTML = `
+   <h3>${s.name} surasi</h3>
+   <p>${s.count} oyat</p>
+   <button onclick="startSurah(${index})">▶ Tinglash</button>
+ `;
+ list.appendChild(div);
+});
+
+function startSurah(index) {
+ currentSurah = surahs[index];
+ ayah = 1;
+ playAyah();
+}
+
+function playAyah() {
+ if (ayah > currentSurah.count) {
+   statusText.textContent = "Sura tugadi";
+   return;
+ }
+
+ let s = String(currentSurah.id).padStart(3, "0");
+ let a = String(ayah).padStart(3, "0");
+
+ audio.src =
+ `https://everyayah.com/data/Alafasy_128kbps/${s}${a}.mp3`;
+
+ statusText.textContent =
+ `${currentSurah.name} — ${ayah}-oyat`;
+
+ audio.play().catch(() => {
+   statusText.textContent = "Audio yuklanmadi. Qayta urinib ko'ring.";
+ });
+}
+
+audio.addEventListener("ended", () => {
+ ayah++;
+ playAyah();
+});
+</script>
+
+</body>
+</html>
